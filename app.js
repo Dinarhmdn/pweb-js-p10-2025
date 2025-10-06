@@ -14,6 +14,8 @@ const cuisineFilter = document.getElementById('cuisine-filter');
 const modal = document.getElementById('modal');
 const modalContent = document.getElementById('modal-content');
 const modalClose = document.getElementById('modal-close');
+const loginBtn = document.getElementById('login-btn');
+const themeToggleBtn = document.getElementById('theme-toggle-btn');
 
 let allRecipes = [];
 let filtered = [];
@@ -57,9 +59,9 @@ function createCard(recipe) {
   const div = document.createElement('div');
   div.className = 'card recipe';
   div.innerHTML = `
-    <img src="${recipe.thumbnail || recipe.image || 'https://via.placeholder.com/400x300?text=No+Image'}" alt="${recipe.title}">
+    <img src="${recipe.thumbnail || recipe.image || 'https://via.placeholder.com/400x300?text=No+Image'}" alt="${recipe.name}">
     <div class="content">
-      <h3>${recipe.title}</h3>
+      <h3>${recipe.name}</h3>
       <div class="meta">
         ${recipe.cookingTime ? recipe.cookingTime + ' mins' : ''} •
         ${recipe.difficulty || ''} • ${recipe.cuisine || ''}
@@ -89,11 +91,11 @@ function applyFilters() {
   filtered = allRecipes.filter(r => {
     if (cuisine && r.cuisine !== cuisine) return false;
     if (!q) return true;
-    const inTitle = (r.title || '').toLowerCase().includes(q);
+    const inName = (r.name || '').toLowerCase().includes(q);
     const inCuisine = (r.cuisine || '').toLowerCase().includes(q);
     const inIngredients = (r.ingredients || []).join(' ').toLowerCase().includes(q);
     const inTags = (r.tags || []).join(' ').toLowerCase().includes(q);
-    return inTitle || inCuisine || inIngredients || inTags;
+    return inName || inCuisine || inIngredients || inTags;
   });
   renderPage(true);
 }
@@ -107,7 +109,7 @@ function showRecipeDetail(id) {
   const r = allRecipes.find(x => x.id == id);
   if (!r) return;
   modalContent.innerHTML = `
-    <h2>${r.title}</h2>
+    <h2>${r.name}</h2>
     <img src="${r.image}" style="width:100%;border-radius:8px;margin:10px 0">
     <p><b>Cuisine:</b> ${r.cuisine}</p>
     <p><b>Difficulty:</b> ${r.difficulty}</p>
@@ -119,7 +121,10 @@ function showRecipeDetail(id) {
 
 modalClose.addEventListener('click', () => modal.close());
 logoutBtn.addEventListener('click', () => {
-  showPage(loginPage);
+    localStorage.removeItem('userFirstName');
+    loginForm.reset();
+    setFeedback(loginFeedback, '');
+    showPage(loginPage);
 });
 
 searchInput.addEventListener('input', debounceSearch);
@@ -131,15 +136,81 @@ recipesList.addEventListener('click', e => {
   }
 });
 
-loginForm.addEventListener('submit', e => {
-  e.preventDefault();
-  const user = usernameInput.value.trim();
-  const pass = passwordInput.value.trim();
-  if (!user || !pass) {
-    setFeedback(loginFeedback, 'Isi username dan password', true);
-    return;
-  }
-  userNameDisplay.textContent = `Hi, ${user}`;
-  showPage(recipesPage);
-  fetchRecipes();
-});
+// TAMBAHKAN FUNGSI BARU INI
+async function handleLogin(e) {
+    e.preventDefault();
+    const username = usernameInput.value.trim();
+    const password = passwordInput.value.trim();
+
+    if (!username || !password) {
+        setFeedback(loginFeedback, 'Username dan password harus diisi.', true);
+        return;
+    }
+
+    loginBtn.disabled = true;
+    loginBtn.textContent = 'Logging in...';
+    setFeedback(loginFeedback, '');
+
+    try {
+        const res = await fetch('https://dummyjson.com/users');
+        if (!res.ok) throw new Error('Gagal mengambil data user.');
+        
+        const data = await res.json();
+        const user = data.users.find(u => u.username === username);
+
+        if (user && user.password === password) {
+            setFeedback(loginFeedback, 'Login berhasil! Mengarahkan...', false);
+            localStorage.setItem('userFirstName', user.firstName);
+            setTimeout(() => {
+                checkAuth();
+            }, 1500);
+        } else {
+            throw new Error('Username atau password salah.');
+        }
+    } catch (err) {
+        setFeedback(loginFeedback, err.message, true);
+    } finally {
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'Login';
+    }
+}
+
+loginForm.addEventListener('submit', handleLogin);
+
+function checkAuth() {
+    const userFirstName = localStorage.getItem('userFirstName');
+    if (userFirstName) {
+        userNameDisplay.textContent = `Hi, ${userFirstName}`;
+        showPage(recipesPage);
+        if (allRecipes.length === 0) {
+            fetchRecipes();
+        }
+    } else {
+        showPage(loginPage);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', checkAuth);
+
+function toggleTheme() {
+    document.body.classList.toggle('dark-mode');
+
+    if (document.body.classList.contains('dark-mode')) {
+        localStorage.setItem('theme', 'dark');
+        themeToggleBtn.textContent = '☀️';
+    } else {
+        localStorage.removeItem('theme');
+        themeToggleBtn.textContent = '🌙';
+    }
+}
+
+function applyInitialTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+        themeToggleBtn.textContent = '☀️';
+    }
+}
+
+themeToggleBtn.addEventListener('click', toggleTheme);
+applyInitialTheme();

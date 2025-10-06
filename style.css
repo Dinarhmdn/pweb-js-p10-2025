@@ -190,3 +190,33 @@ button {
     width: 100%;
   }
 }
+
+body.dark-mode {
+    --bg: #1a1a1a;
+    --card: #2c2c2c;
+    --muted: #a0a0a0;
+    color: #f0f0f0;
+}
+
+#theme-toggle-btn {
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0 5px;
+}
+
+#modal {
+    width: min(800px, 96%);
+    border-radius: 12px;
+    padding: 18px;
+}
+
+#modal {
+  width: min(800px, 96%);
+  border-radius: 12px;
+  padding: 18px;
+  background: var(--card);
+  color: inherit;
+  border: none;
+}
