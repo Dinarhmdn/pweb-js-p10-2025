@@ -108,16 +108,50 @@ function debounceSearch() {
 function showRecipeDetail(id) {
   const r = allRecipes.find(x => x.id == id);
   if (!r) return;
+
+  // format bintang rating
+  const stars = '⭐'.repeat(Math.round(r.rating || 0));
+
+  // buat list ingredients dan instructions
+  const ingredientsList = r.ingredients
+    .map(i => `<li>${i}</li>`)
+    .join('');
+  const instructionsList = r.instructions
+    .map((step, i) => `<li>${step}</li>`)
+    .join('');
+
+  // buat tags
+  const tags = (r.tags || [])
+    .map(tag => `<span class="tag">${tag}</span>`)
+    .join(' ');
+
   modalContent.innerHTML = `
     <h2>${r.name}</h2>
-    <img src="${r.image}" style="width:100%;border-radius:8px;margin:10px 0">
-    <p><b>Cuisine:</b> ${r.cuisine}</p>
-    <p><b>Difficulty:</b> ${r.difficulty}</p>
-    <p><b>Ingredients:</b> ${r.ingredients.join(', ')}</p>
-    <p><b>Instructions:</b> ${r.instructions.join(' ')}</p>
+
+    <div class="recipe-info">
+      <img src="${r.image}" alt="${r.name}">
+      <div class="stats">
+        <div><b>Prep Time:</b> ${r.prepTimeMinutes} mins</div>
+        <div><b>Cook Time:</b> ${r.cookTimeMinutes} mins</div>
+        <div><b>Servings:</b> ${r.servings}</div>
+        <div><b>Calories:</b> ${r.caloriesPerServing} cal/serving</div>
+        <div><b>Difficulty:</b> ${r.difficulty}</div>
+        <div><b>Cuisine:</b> ${r.cuisine}</div>
+        <div><b>Rating:</b> ${stars} (${r.rating}) — ${r.reviewCount} reviews</div>
+        <div><b>Tags:</b> ${tags}</div>
+      </div>
+    </div>
+
+    <h3>Ingredients</h3>
+    <ul>${ingredientsList}</ul>
+
+    <h3>Instructions</h3>
+    <ol>${instructionsList}</ol>
   `;
+
   modal.showModal();
 }
+
 
 modalClose.addEventListener('click', () => modal.close());
 logoutBtn.addEventListener('click', () => {
