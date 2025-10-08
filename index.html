@@ -8,7 +8,6 @@
 </head>
 <body>
   <main id="app">
-    <!-- LOGIN PAGE -->
     <section id="login-page" class="page visible">
       <div class="card login-card">
         <h1>Recipe Collection</h1>
@@ -27,7 +26,6 @@
       </div>
     </section>
 
-    <!-- RECIPES PAGE -->
     <section id="recipes-page" class="page">
       <header class="nav">
         <div class="brand">Recipe Collection</div>
@@ -42,7 +40,6 @@
         <div class="search-wrap">
           <input id="search-input" placeholder="Cari resep, cuisine, ingredient, atau tag...">
         </div>
-
         <div class="filters">
           <label>Cuisine:
             <select id="cuisine-filter"><option value="">All</option></select>
@@ -52,6 +49,8 @@
 
       <section id="recipes-list" class="grid"></section>
 
+      <div class="center small" id="recipes-count"></div>
+
       <div class="center">
         <button id="show-more-btn">Show More</button>
       </div>
@@ -59,7 +58,6 @@
       <div id="recipes-feedback" aria-live="polite"></div>
     </section>
 
-    <!-- FULL RECIPE MODAL -->
     <dialog id="modal">
       <button class="modal-close" id="modal-close">✕</button>
       <div id="modal-content"></div>

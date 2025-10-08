@@ -19,7 +19,6 @@ body {
   transition: background 0.3s ease, color 0.3s ease;
 }
 
-/* PAGE WRAPPER */
 .page {
   display: none;
   padding: 24px;
@@ -29,7 +28,6 @@ body {
   display: block;
 }
 
-/* CARD */
 .card {
   background: var(--card);
   padding: 20px;
@@ -37,7 +35,6 @@ body {
   box-shadow: 0 6px 18px rgba(15, 15, 15, 0.06);
 }
 
-/* LOGIN PAGE */
 .login-card {
   max-width: 380px;
   margin: 80px auto;
@@ -81,7 +78,6 @@ button:hover {
   border: 0;
 }
 
-/* NAVBAR */
 .nav {
   display: flex;
   justify-content: space-between;
@@ -103,7 +99,6 @@ button:hover {
   align-items: center;
 }
 
-/* FILTER & SEARCH BAR */
 .controls {
   display: flex;
   gap: 12px;
@@ -119,7 +114,6 @@ button:hover {
   width: 200px;
 }
 
-/* GRID LIST */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -127,8 +121,9 @@ button:hover {
 }
 
 .card.recipe {
-  padding: 0;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .recipe img {
@@ -139,7 +134,10 @@ button:hover {
 }
 
 .recipe .content {
-  padding: 10px;
+  flex: 1; 
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .recipe h3 {
@@ -168,7 +166,6 @@ button:hover {
   margin: 0 auto;
 }
 
-/* MODAL */
 #modal {
   width: min(800px, 96%);
   border-radius: 12px;
@@ -210,7 +207,6 @@ button:hover {
   font-size: 13px;
 }
 
-/* RECIPE DETAIL MODAL CONTENT */
 .recipe-info {
   display: flex;
   flex-wrap: wrap;
@@ -297,7 +293,6 @@ ol {
   }
 }
 
-/* THEME TOGGLE */
 #theme-toggle-btn {
   background: transparent;
   border: none;
@@ -306,7 +301,6 @@ ol {
   padding: 0 5px;
 }
 
-/* DARK MODE */
 body.dark-mode {
   --bg: #0a0f0a;
   --card: #1a1a1a;
