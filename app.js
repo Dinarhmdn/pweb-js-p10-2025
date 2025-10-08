@@ -16,6 +16,7 @@ const modalContent = document.getElementById('modal-content');
 const modalClose = document.getElementById('modal-close');
 const loginBtn = document.getElementById('login-btn');
 const themeToggleBtn = document.getElementById('theme-toggle-btn');
+const recipesCount = document.getElementById('recipes-count');
 
 let allRecipes = [];
 let filtered = [];
@@ -76,14 +77,28 @@ function createCard(recipe) {
 }
 
 function renderPage(isReset = false) {
-  if (isReset) { page = 0; recipesList.innerHTML = ''; }
+  if (isReset) { 
+    page = 0; 
+    recipesList.innerHTML = ''; 
+  }
+
   const start = page * PAGE_SIZE;
   const slice = filtered.slice(start, start + PAGE_SIZE);
   slice.forEach(r => recipesList.appendChild(createCard(r)));
+
   page++;
+
+  const showing = Math.min(page * PAGE_SIZE, filtered.length);
+  recipesCount.textContent = `Showing ${showing} of ${filtered.length} recipes`;
+
   showMoreBtn.style.display = filtered.length > page * PAGE_SIZE ? 'inline-block' : 'none';
-  if (filtered.length === 0) recipesList.innerHTML = '<div class="card">Tidak ada resep</div>';
+
+  if (filtered.length === 0) {
+    recipesList.innerHTML = '<div class="card">Tidak ada resep</div>';
+    recipesCount.textContent = '';
+  }
 }
+
 
 function applyFilters() {
   const q = searchInput.value.trim().toLowerCase();
@@ -109,18 +124,13 @@ function showRecipeDetail(id) {
   const r = allRecipes.find(x => x.id == id);
   if (!r) return;
 
-  // format bintang rating
   const stars = '⭐'.repeat(Math.round(r.rating || 0));
-
-  // buat list ingredients dan instructions
   const ingredientsList = r.ingredients
     .map(i => `<li>${i}</li>`)
     .join('');
   const instructionsList = r.instructions
     .map((step, i) => `<li>${step}</li>`)
     .join('');
-
-  // buat tags
   const tags = (r.tags || [])
     .map(tag => `<span class="tag">${tag}</span>`)
     .join(' ');
@@ -170,7 +180,6 @@ recipesList.addEventListener('click', e => {
   }
 });
 
-// TAMBAHKAN FUNGSI BARU INI
 async function handleLogin(e) {
     e.preventDefault();
     const username = usernameInput.value.trim();
